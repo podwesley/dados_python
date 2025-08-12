@@ -31,175 +31,254 @@ Um extrator de dados **simples**, **poderoso** e **flexível** desenvolvido em P
 - Extração personalizada para relatórios
 - Transformação de dados para diferentes formatos
 
-## 📋 Exemplo de Uso
-
-```python
-import csv
-from pathlib import Path
-
-INPUT_FILE = Path('combinacoes_cenarios.csv')
-OUTPUT_FILE = Path('cenarios.feature')
-BDD_TEXT = """"""
-
-def processar_csv_performatico(arquivo_csv: Path, arquivo_saida: Path):
-    try:
-        with arquivo_csv.open('r', encoding='utf-8', newline='') as arquivo:
-            amostra = arquivo.read(2048)
-            arquivo.seek(0)
-            delimitador = max([',', ';', '\t'], key=amostra.count)
-
-            leitor_csv = csv.reader(arquivo, delimiter=delimitador)
-
-            cabecalho = [col.strip('\ufeff') for col in next(leitor_csv)]
-
-            idx_id = next((i for i, col in enumerate(cabecalho) if col.lower() == 'id'), None)
-            if idx_id is None:
-                raise ValueError("Coluna 'id' não encontrada no cabeçalho do CSV.")
-
-            outras_colunas = [(i, col) for i, col in enumerate(cabecalho) if i != idx_id]
-            larguras = {i: len(col) for i, col in outras_colunas}
-
-            for linha in leitor_csv:
-                for idx, _ in outras_colunas:
-                    if idx < len(linha):
-                        larguras[idx] = max(larguras[idx], len(linha[idx]))
-
-        with arquivo_csv.open('r', encoding='utf-8', newline='') as input_f, arquivo_saida.open('w', encoding='utf-8') as output_f:
-            leitor_csv = csv.reader(input_f, delimiter=delimitador)
-            next(leitor_csv)
-
-            header_formatado = "| " + " | ".join(col.ljust(larguras[i]) for i, col in outras_colunas) + " |"
-            output_f.write(f"{BDD_TEXT}\n")
-            linhas_processadas = 0
-            for linha in leitor_csv:
-                data_formatada = "| " + " | ".join(linha[i].ljust(larguras[i]) for i, _ in outras_colunas) + " |"
-
-                output_f.write(f"@{linha[idx_id]}\nExamples:\n{header_formatado}\n{data_formatada}\n\n")
-                linhas_processadas += 1
-
-        print(f"✅ Concluída! {linhas_processadas} linhas processadas. 📁 CSV: {arquivo_csv} → 📄 FEATURE: {arquivo_saida}")
-
-    except FileNotFoundError:
-        print(f"❌ Erro: Arquivo CSV não encontrado em '{arquivo_csv}'")
-    except Exception as e:
-        print(f"❌ Erro inesperado: {e}")
-
-if __name__ == "__main__":
-    processar_csv_performatico(INPUT_FILE, OUTPUT_FILE)
-```
-
 ## 🚀 Como Usar
 
-1. **Configure os arquivos**:
-   ```python
-   INPUT_FILE = Path('seu_arquivo.csv')
-   OUTPUT_FILE = Path('saida.feature')
-   ```
+### 1. Configuração Básica
 
-2. **Personalize o texto BDD** (opcional):
-   ```python
-   BDD_TEXT = """Feature: Seus cenários de teste
-   Como um usuário
-   Eu quero executar cenários
-   Para validar funcionalidades"""
-   ```
+```python
+# Configure os caminhos dos arquivos
+INPUT_FILE = Path('seu_arquivo.csv')
+OUTPUT_FILE = Path('saida.feature')
 
-3. **Execute o script**:
-   ```bash
-   python extrator.py
-   ```
+# Personalize o texto BDD (opcional)
+BDD_TEXT = """Feature: Cenários de Teste Automatizados
+  Como um usuário do sistema
+  Eu quero executar cenários de teste
+  Para validar as funcionalidades
+
+  Scenario Outline: Validar dados
+    Given que eu tenho os dados do cenário
+    When eu executo o teste
+    Then o resultado deve ser válido"""
+```
+
+### 2. Execução
+
+```bash
+python extrator.py
+```
+
+### 3. Saída Esperada
+
+```
+✅ Concluída! 150 linhas processadas. 📁 CSV: dados.csv → 📄 FEATURE: cenarios.feature
+```
 
 ## 📁 Estrutura de Entrada
 
-O arquivo CSV deve conter:
-- Uma coluna `id` (obrigatória)
-- Qualquer quantidade de colunas adicionais
-- Headers na primeira linha
+### Formato CSV Esperado
 
-### Exemplo de CSV:
 ```csv
-id,nome,idade,cidade
-1,João,25,São Paulo
-2,Maria,30,Rio de Janeiro
-3,Pedro,22,Belo Horizonte
+id,nome,idade,cidade,status
+1,João Silva,25,São Paulo,ativo
+2,Maria Santos,30,Rio de Janeiro,inativo
+3,Pedro Oliveira,22,Belo Horizonte,ativo
+4,Ana Costa,28,Salvador,ativo
 ```
 
-## 📄 Exemplo de Saída (.feature)
+### Requisitos
+- ✅ Coluna `id` obrigatória (case-insensitive)
+- ✅ Headers na primeira linha
+- ✅ Suporte a delimitadores: `,`, `;`, `\t`
+- ✅ Encoding UTF-8 com suporte a BOM
+
+## 📄 Exemplos de Saída
+
+### Formato BDD/Gherkin (.feature)
 
 ```gherkin
+Feature: Cenários de Teste Automatizados
+  Como um usuário do sistema
+  Eu quero executar cenários de teste
+  Para validar as funcionalidades
+
 @1
 Examples:
-| nome | idade | cidade        |
-| João | 25    | São Paulo     |
+| nome        | idade | cidade      | status |
+| João Silva  | 25    | São Paulo   | ativo  |
 
 @2
 Examples:
-| nome  | idade | cidade           |
-| Maria | 30    | Rio de Janeiro   |
+| nome         | idade | cidade         | status   |
+| Maria Santos | 30    | Rio de Janeiro | inativo  |
 
 @3
 Examples:
-| nome  | idade | cidade           |
-| Pedro | 22    | Belo Horizonte   |
+| nome           | idade | cidade          | status |
+| Pedro Oliveira | 22    | Belo Horizonte  | ativo  |
+```
+
+### Formato Markdown Simples
+
+```markdown
+| nome        | idade | cidade      | status |
+| João Silva  | 25    | São Paulo   | ativo  |
+| Maria Santos | 30    | Rio de Janeiro | inativo  |
+| Pedro Oliveira | 22    | Belo Horizonte  | ativo  |
 ```
 
 ## ⚙️ Personalização Avançada
 
-### Modificar Formato de Saída
-Edite a linha de formatação para personalizar a saída:
+### 🎨 Modificar Formato de Saída
 
 ```python
-# Formato atual (BDD/Gherkin)
+# Formato BDD atual
 output_f.write(f"@{linha[idx_id]}\nExamples:\n{header_formatado}\n{data_formatada}\n\n")
 
-# Formato Markdown simples
-output_f.write(f"{data_formatada}\n")
+# Formato Markdown com ID
+output_f.write(f"## Registro {linha[idx_id]}\n{data_formatada}\n\n")
 
-# Formato personalizado
-output_f.write(f"Cenário {linha[idx_id]}:\n{data_formatada}\n---\n")
+# Formato TXT simples
+output_f.write(f"ID: {linha[idx_id]} | {data_formatada}\n")
+
+# Formato JSON-like
+output_f.write(f'{{"id": "{linha[idx_id]}", "data": "{data_formatada}"}}\n')
 ```
 
-### Filtrar Colunas Específicas
+### 🔍 Filtrar Colunas Específicas
+
 ```python
 # Incluir apenas colunas específicas
-colunas_desejadas = ['nome', 'idade']
+colunas_desejadas = ['nome', 'idade', 'status']
 outras_colunas = [(i, col) for i, col in enumerate(cabecalho) 
                  if i != idx_id and col in colunas_desejadas]
+
+# Excluir colunas específicas
+colunas_excluidas = ['campo_interno', 'temp']
+outras_colunas = [(i, col) for i, col in enumerate(cabecalho) 
+                 if i != idx_id and col not in colunas_excluidas]
 ```
 
-## 🔧 Requisitos
+### 🎛️ Controle de Headers
 
-- Python 3.6+
-- Biblioteca `csv` (incluída no Python)
-- Biblioteca `pathlib` (incluída no Python)
+```python
+# Repetir header a cada linha (atual)
+for linha in leitor_csv:
+    data_formatada = "| " + " | ".join(linha[i].ljust(larguras[i]) for i, _ in outras_colunas) + " |"
+    output_f.write(f"@{linha[idx_id]}\nExamples:\n{header_formatado}\n{data_formatada}\n\n")
 
-## 📊 Performance
+# Header único no início
+output_f.write(f"{header_formatado}\n")
+for linha in leitor_csv:
+    data_formatada = "| " + " | ".join(linha[i].ljust(larguras[i]) for i, _ in outras_colunas) + " |"
+    output_f.write(f"{data_formatada}\n")
 
-- ✅ Otimizado para uso eficiente de memória
-- ✅ Processamento em duas passadas para cálculo automático de larguras
-- ✅ Detecção automática de delimitadores
-- ✅ Tratamento robusto de encoding e caracteres especiais
+# Sem headers
+for linha in leitor_csv:
+    data_formatada = "| " + " | ".join(linha[i].ljust(larguras[i]) for i, _ in outras_colunas) + " |"
+    output_f.write(f"{data_formatada}\n")
+```
+
+## 🔧 Requisitos Técnicos
+
+- **Python**: 3.6 ou superior
+- **Bibliotecas**: 
+  - `csv` (incluída)
+  - `pathlib` (incluída)
+- **Encoding**: UTF-8
+- **Delimitadores suportados**: `,`, `;`, `\t`
+
+## 📊 Performance e Otimizações
+
+### ⚡ Características de Performance
+- **Duas passadas**: Primeira para calcular larguras, segunda para escrever
+- **Detecção automática**: Delimitador mais comum identificado automaticamente
+- **Uso eficiente de memória**: Processa linha por linha
+- **Encoding robusto**: Suporte completo a UTF-8 e BOM
+
+### 📈 Benchmarks
+- ✅ Validado com múltiplos modelos de IA
+- ✅ Otimizado para arquivos grandes
+- ✅ Uso de memória constante
+- ✅ Processamento linear O(n)
 
 ## 🐛 Tratamento de Erros
 
-- Arquivo não encontrado
-- Coluna 'id' ausente
-- Problemas de encoding
-- Delimitadores não suportados
-- Feedback visual com emojis para facilitar debugging
+### Tipos de Erro Tratados
+```
+❌ Erro: Arquivo CSV não encontrado em 'arquivo.csv'
+❌ Erro inesperado: Coluna 'id' não encontrada no cabeçalho do CSV.
+❌ Erro inesperado: 'utf-8' codec can't decode byte...
+```
 
-## 🎯 Casos de Uso Práticos
+### Como Resolver
+1. **Arquivo não encontrado**: Verifique o caminho e nome do arquivo
+2. **Coluna ID ausente**: Adicione uma coluna 'id' ao seu CSV
+3. **Problema de encoding**: Salve o arquivo como UTF-8
 
-- **Testes BDD**: Geração de arquivos `.feature` para Cucumber/Gherkin
-- **Documentação**: Conversão de dados para Markdown formatado
-- **Relatórios**: Extração personalizada de dados tabulares
-- **Migração de Dados**: Transformação entre diferentes formatos
-- **Automação de Testes**: Geração dinâmica de cenários de teste
+## 🎯 Casos de Uso Reais
+
+
+### 📝 Documentação Técnica
+```python
+# Altere para formato Markdown
+output_f.write(f"### Usuário {linha[idx_id]}\n{data_formatada}\n\n")
+```
+
+### 📋 Relatórios de Dados
+```python
+# Formato para relatórios
+output_f.write(f"Registro #{linha[idx_id]}: {data_formatada}\n")
+```
+
+### 🔄 Migração de Dados
+```python
+# Formato SQL INSERT
+colunas = [col for _, col in outras_colunas]
+valores = [linha[i] for i, _ in outras_colunas]
+output_f.write(f"INSERT INTO tabela ({', '.join(colunas)}) VALUES ('{\"', '\".join(valores)}');\n")
+```
+
+## 💡 Dicas e Truques
+
+### 🔥 Dica 1: Linha Comentada Importante
+```python
+# output_f.write(f"{data_formatada}\n") # IMPORTANTE NÃO APAGAR!
+```
+Esta linha permite mudança rápida para formato simples quando necessário.
+
+### 🔥 Dica 2: Debug de Delimitadores
+```python
+print(f"Delimitador detectado: '{delimitador}'")
+```
+Adicione esta linha para verificar qual delimitador foi detectado.
+
+### 🔥 Dica 3: Visualizar Larguras
+```python
+print(f"Larguras calculadas: {larguras}")
+```
+Útil para entender o dimensionamento das colunas.
+
+### 🔥 Dica 4: Backup Automático
+```python
+import shutil
+if arquivo_saida.exists():
+    shutil.copy(arquivo_saida, arquivo_saida.with_suffix('.bak'))
+```
+
+## 📚 Extensões Possíveis
+
+### 🔮 Funcionalidades Futuras
+- Suporte a Excel (.xlsx) nativo
+- Interface gráfica (GUI)
+- Configuração via arquivo JSON
+- Templates de saída personalizáveis
+- Validação de dados de entrada
+- Logs detalhados
+- Processamento em lote
+
+
 
 ## 📝 Notas do Desenvolvedor
 
-Este projeto foi desenvolvido com auxílio de IA, mas **cada linha foi cuidadosamente revisada, debugada e testada**. A performance foi validada usando múltiplos modelos de IA (GPT-4, Sonnet-4, Gemini) para garantir uso otimizado de memória e recursos.
+Este extrator foi desenvolvido com auxílio de IA, mas **cada linha foi cuidadosamente revisada, debugada e testada manualmente**. A performance foi validada usando múltiplos modelos de IA (GPT-4, Sonnet-4, Gemini) para garantir uso otimizado de memória e recursos.
+
+### 🎯 Filosofia de Desenvolvimento
+- **Simplicidade**: Código limpo e fácil de entender
+- **Flexibilidade**: Máxima customização com mínimo esforço  
+- **Performance**: Eficiência sem comprometer funcionalidade
+- **Robustez**: Tratamento completo de erros e edge cases
 
 ---
 
-**💡 Dica**: Mantenha a linha comentada `# output_f.write(f"{data_formatada}\n")` para facilitar mudanças rápidas de formato!
+💻 **Desenvolvido com ❤️ e muita IA, mas debugado linha por linha com 🧠 humano!**
