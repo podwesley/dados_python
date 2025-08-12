@@ -76,6 +76,8 @@ id,nome,idade,cidade,status
 4,Ana Costa,28,Salvador,ativo
 ```
 
+
+
 ### Requisitos
 - ✅ Coluna `id` obrigatória (case-insensitive)
 - ✅ Headers na primeira linha
@@ -115,6 +117,53 @@ Examples:
 | João Silva  | 25    | São Paulo   | ativo  |
 | Maria Santos | 30    | Rio de Janeiro | inativo  |
 | Pedro Oliveira | 22    | Belo Horizonte  | ativo  |
+```
+
+### Formato TXT Simples
+
+```txt
+ID: 1 | João Silva  | 25    | São Paulo      | ativo  
+ID: 2 | Maria Santos | 30    | Rio de Janeiro | inativo
+ID: 3 | Pedro Oliveira | 22    | Belo Horizonte | ativo  
+```
+
+### Formato TXT com Headers
+
+```txt
+nome           | idade | cidade         | status 
+João Silva     | 25    | São Paulo      | ativo  
+Maria Santos   | 30    | Rio de Janeiro | inativo
+Pedro Oliveira | 22    | Belo Horizonte | ativo  
+```
+
+### Formato TXT personalizado
+
+```txt
+ID: X7HCGD
+Cidade: Belo Horizonte
+Email: igor.oliveira@hotmail.com
+
+ID: NXD4P7
+Cidade: São Paulo
+Email: fernanda.lima@outlook.com
+```
+
+### Formato JSON
+
+```json
+{"id": "1", "nome": "João Silva", "idade": "25", "cidade": "São Paulo", "status": "ativo"}
+{"id": "2", "nome": "Maria Santos", "idade": "30", "cidade": "Rio de Janeiro", "status": "inativo"}
+{"id": "3", "nome": "Pedro Oliveira", "idade": "22", "cidade": "Belo Horizonte", "status": "ativo"}
+```
+
+### Formato JSON Array
+
+```json
+[
+  {"id": "1", "nome": "João Silva", "idade": "25", "cidade": "São Paulo", "status": "ativo"},
+  {"id": "2", "nome": "Maria Santos", "idade": "30", "cidade": "Rio de Janeiro", "status": "inativo"},
+  {"id": "3", "nome": "Pedro Oliveira", "idade": "22", "cidade": "Belo Horizonte", "status": "ativo"}
+]
 ```
 
 ## ⚙️ Personalização Avançada

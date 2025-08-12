@@ -2,8 +2,12 @@ import csv
 from pathlib import Path
 
 INPUT_FILE = Path('combinacoes_cenarios.csv')
-OUTPUT_FILE = Path('cenarios.feature')
+OUTPUT_FILE = Path('cenarios.txt')
 BDD_TEXT = """"""
+
+# Configurações para formato TXT
+FORMATO_TXT = True  # True para TXT simples, False para formato tabela
+CAMPOS_ESCOLHA = ['Cidade', 'Email']  # Dois campos de escolha para o formato TXT
 
 def processar_csv_performatico(arquivo_csv: Path, arquivo_saida: Path):
     try:
@@ -20,7 +24,14 @@ def processar_csv_performatico(arquivo_csv: Path, arquivo_saida: Path):
             if idx_id is None:
                 raise ValueError("Coluna 'id' não encontrada no cabeçalho do CSV.")
 
-            outras_colunas = [(i, col) for i, col in enumerate(cabecalho) if i != idx_id]
+            if FORMATO_TXT:
+                # Para formato TXT, usar apenas os campos de escolha
+                outras_colunas = [(i, col) for i, col in enumerate(cabecalho) 
+                                if i != idx_id and col in CAMPOS_ESCOLHA]
+            else:
+                # Para formato tabela, usar todas as colunas exceto ID
+                outras_colunas = [(i, col) for i, col in enumerate(cabecalho) if i != idx_id]
+            
             larguras = {i: len(col) for i, col in outras_colunas}
 
             for linha in leitor_csv:
@@ -32,14 +43,25 @@ def processar_csv_performatico(arquivo_csv: Path, arquivo_saida: Path):
             leitor_csv = csv.reader(input_f, delimiter=delimitador)
             next(leitor_csv)
 
-            header_formatado = "| " + " | ".join(col.ljust(larguras[i]) for i, col in outras_colunas) + " |"
-            output_f.write(f"{BDD_TEXT}\n")
             linhas_processadas = 0
             for linha in leitor_csv:
-                data_formatada = "| " + " | ".join(linha[i].ljust(larguras[i]) for i, _ in outras_colunas) + " |"
-
-                output_f.write(f"@{linha[idx_id]}\nExamples:\n{header_formatado}\n{data_formatada}\n\n")
-                # output_f.write(f"{data_formatada}\n") # IMPORTANTE NÃO APAGAR!
+                if FORMATO_TXT:
+                    # Formato TXT simples sem tabela
+                    campos_valores = []
+                    for i, col in outras_colunas:
+                        if i < len(linha):
+                            campos_valores.append(f"{col}: {linha[i]}")
+                    
+                    output_f.write(f"ID: {linha[idx_id]}\n")
+                    for campo_valor in campos_valores:
+                        output_f.write(f"{campo_valor}\n")
+                    output_f.write("\n")
+                else:
+                    # Formato tabela original
+                    header_formatado = "| " + " | ".join(col.ljust(larguras[i]) for i, col in outras_colunas) + " |"
+                    data_formatada = "| " + " | ".join(linha[i].ljust(larguras[i]) for i, _ in outras_colunas) + " |"
+                    output_f.write(f"@{linha[idx_id]}\nExamples:\n{header_formatado}\n{data_formatada}\n\n")
+                
                 linhas_processadas += 1
 
         print(f"✅ Concluída! {linhas_processadas} linhas processadas. 📁 CSV: {arquivo_csv} → 📄 FEATURE: {arquivo_saida}")
