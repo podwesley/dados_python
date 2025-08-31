@@ -1,0 +1,80 @@
+ID: X7HCGD
+Cidade: Belo Horizonte
+Email: igor.oliveira@hotmail.com
+
+ID: NXD4P7
+Cidade: São Paulo
+Email: fernanda.lima@outlook.com
+
+ID: KB0LOA
+Cidade: Rio de Janeiro
+Email: julia.oliveira@yahoo.com
+
+ID: SWNIKJ
+Cidade: Belo Horizonte
+Email: daniela.souza@yahoo.com
+
+ID: P14VY0
+Cidade: Salvador
+Email: fernanda.lima@yahoo.com
+
+ID: DO9Z6H
+Cidade: São Paulo
+Email: daniela.oliveira@hotmail.com
+
+ID: L2WHF0
+Cidade: São Paulo
+Email: ana.nascimento@gmail.com
+
+ID: J1QPK5
+Cidade: São Paulo
+Email: ana.silva@hotmail.com
+
+ID: LHNH7X
+Cidade: Belo Horizonte
+Email: fernanda.lima@gmail.com
+
+ID: 7TXALJ
+Cidade: Belo Horizonte
+Email: gabriel.nascimento@hotmail.com
+
+ID: CG71ZF
+Cidade: São Paulo
+Email: ana.lima@gmail.com
+
+ID: 4MIVHX
+Cidade: Rio de Janeiro
+Email: fernanda.souza@outlook.com
+
+ID: 1KK85F
+Cidade: Curitiba
+Email: bruno.rodrigues@hotmail.com
+
+ID: VMXFI8
+Cidade: Porto Alegre
+Email: daniela.rodrigues@yahoo.com
+
+ID: GP257E
+Cidade: São Paulo
+Email: helena.nascimento@outlook.com
+
+ID: QQQTT6
+Cidade: Curitiba
+Email: julia.oliveira@outlook.com
+
+ID: 15P233
+Cidade: Salvador
+Email: bruno.rodrigues@outlook.com
+
+ID: DYL1RE
+Cidade: Rio de Janeiro
+Email: julia.silva@gmail.com
+
+ID: 3TW769
+Cidade: Porto Alegre
+Email: fernanda.oliveira@yahoo.com
+
+ID: H4DNLO
+Cidade: Belo Horizonte
+Email: eduardo.souza@yahoo.com
+
